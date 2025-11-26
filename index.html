@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ChatGPT Efficiency Evaluation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.55);
+      --bg-card-solid: rgba(15, 23, 42, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --text-light: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.35);
+      --radius: 20px;
+      --shadow: 0 0 30px rgba(0,0,0,0.45);
+      --transition: 0.25s ease;
+    }
+
+    body {
+      font-family: Inter, sans-serif;
+      margin: 0;
+      padding: 0;
+
+      /* ⭐ NEW BACKGROUND IMAGE ⭐ */
+      background: 
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+        url('f84a388f-8978-42c4-aedd-b803128dbf90.png');
+
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      color: var(--text-light);
+    }
+
+    .wrapper {
+      max-width: 1080px;
+      margin: auto;
+      padding: 32px 20px 100px;
+    }
+
+    header {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.4rem;
+      background: linear-gradient(135deg,#60a5fa,#34d399);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    nav {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    nav a {
+      padding: 10px 18px;
+      border-radius: 9999px;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    nav a:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .page {
+      display: none;
+      margin-top: 32px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .card {
+      background: var(--bg-card-solid);
+      padding: 26px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+      backdrop-filter: blur(12px);
+    }
+
+    .btn {
+      border-radius: 9999px;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: scale(1.03);
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      background: #334155;
+      border: 1px solid var(--border);
+      color: var(--text-light);
+    }
+
+    .charts-grid {
+      display: grid;
+      gap: 32px;
+    }
+    @media (min-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      padding: 10px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    #eval-log {
+      height: 240px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.65);
+      color: #00ff9c;
+      padding: 12px;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      border: 1px solid #334155;
+      backdrop-filter: blur(8px);
+    }
+
+    #assistant {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: var(--bg-card);
+      padding: 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    #assistant-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg,#3b82f6,#34d399);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity:1; transform: translateY(0);}
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrapper">
+
+  <header>
+    <h1>ChatGPT Efficiency Evaluation</h1>
+    <p>Team: <strong>Sam Haddad</strong> · <strong>Taha Hashmi</strong> · <strong>Renato Duka</strong></p>
+
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About & Team</a>
+      <a href="#evaluation">Evaluation Setup</a>
+      <a href="#results">Results</a>
+      <a href="#tech">Server & Live Features</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HOME -->
+    <section id="home" class="page">
+      <div class="card">
+        <h2>Project Overview</h2>
+        <p>
+          This project evaluates ChatGPT’s performance across multiple academic domains by 
+          measuring accuracy, response time, and reasoning consistency. Using MongoDB, 
+          Node.js, WebSockets, and the ChatGPT API, the system automates question retrieval,
+          response analysis, and real-time visualization.
+        </p>
+
+        <p>
+          The evaluation pipeline sends questions from History, Social Science, and 
+          Computer Security to ChatGPT. It then records response speed, detects 
+          correctness using keyword-based validation, and stores results for analysis.
+        </p>
+
+        <p>
+          Through these combined techniques, this project provides a measurable and 
+          transparent way to assess ChatGPT’s academic reliability, highlighting 
+          differences in domain performance and reasoning stability.
+        </p>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="page">
+      <div class="card">
+        <h2>Team Members</h2>
+
+        <p><strong>Sam Haddad — Website structure & front-end design</strong></p>
+        <p>
+          Sam handled the UI layout, page structure, visual hierarchy, and responsive 
+          design. They ensured smooth navigation and a professional interface that makes
+          evaluation data easy to read and interact with.
+        </p>
+
+        <p><strong>Taha Hashmi — Server & API integration (Node.js, MongoDB)</strong></p>
+        <p>
+          Taha developed the complete backend stack, including the Node.js server, 
+          MongoDB communication, WebSocket streaming, and the evaluation engine that 
+          interacts with the ChatGPT API. Their work ensures performance, reliability, 
+          and accurate real-time data handling.
+        </p>
+
+        <p><strong>Renato Duka — Visualization & analysis integration</strong></p>
+        <p>
+          Renato implemented advanced Chart.js visualizations, converting raw backend
+          data into readable insights. Their contributions make the system’s results
+          intuitive through clean charts and comparative breakdowns.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- EVALUATION -->
+    <section id="evaluation" class="page">
+      
+      <div class="card">
+        <h2>Evaluation Setup</h2>
+        <p>The backend fetches questions, sends them to ChatGPT, logs latency, and matches accuracy keywords.</p>
+      </div>
+
+      <div class="card">
+        <h3>ChatGPT Evaluation Method</h3>
+
+        <p>
+          The system evaluates ChatGPT by sending each question to the ChatGPT API,
+          recording its generated answer, calculating response time, and verifying correctness
+          against expected keywords stored in MongoDB.
+        </p>
+
+        <h4>Research Approach</h4>
+        <ul>
+          <li><strong>Node.js</strong> — Hosts the evaluation pipeline.</li>
+          <li><strong>MongoDB</strong> — Stores questions and results.</li>
+          <li><strong>ChatGPT API</strong> — Generates responses.</li>
+          <li><strong>WebSockets</strong> — Real-time updates.</li>
+          <li><strong>Chart.js</strong> — Metrics visualization.</li>
+        </ul>
+
+        <h4>Dataset Overview</h4>
+        <ul>
+          <li><strong>History</strong> — Includes 50 questions covering major events, historical figures, 
+              cultural developments, and cause-and-effect relationships. Tests timeline recall and factual clarity.</li>
+
+          <li><strong>Social Science</strong> — Contains 50 questions involving sociology, psychology, economics, 
+              and human behavior. Evaluates reasoning, theory interpretation, and high-level analytical thinking.</li>
+
+          <li><strong>Computer Security</strong> — Consists of 50 questions related to encryption, cyber threats,
+              authentication models, and network security. Tests ChatGPT’s precision with technical terminology 
+              and security concepts.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Run Full Evaluation</h3>
+        <button type="button" id="runEvalBtn" class="btn btn-primary">▶ Run Evaluation</button>
+        <span id="resultsStatus" class="badge">Idle</span>
+      </div>
+
+      <div class="card">
+        <h3>Evaluation Log</h3>
+        <div id="eval-log">Waiting for evaluation…</div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="page">
+
+      <div class="card">
+        <h2>Results & Visualizations</h2>
+        <span id="resultsStatusResults" class="badge">Results loaded</span>
+      </div>
+
+      <div class="charts-grid card">
+
+        <div>
+          <h3>Accuracy by Domain</h3>
+          <div class="chart-container">
+            <canvas id="accuracyChart"></canvas>
+          </div>
+        </div>
+
+        <div>
+          <h3>Average Response Time</h3>
+          <div class="chart-container">
+            <canvas id="responseTimeChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card">
+        <h3>Summary</h3>
+        <div id="summaryDashboard">Charts will load once backend data is available.</div>
+      </div>
+    </section>
+
+    <!-- TECH -->
+    <section id="tech" class="page">
+      <div class="card">
+        <h2>Server & Middleware</h2>
+        <pre id="api-demo">GET /api/add?a=2&b=3</pre>
+      </div>
+
+      <div class="card">
+        <h3>WebSocket Status</h3>
+        <div id="ws-status">Waiting for connection…</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>© ChatGPT Efficiency Project · Sam Haddad · Taha Hashmi · Renato Duka</footer>
+
+</div>
+
+<div id="assistant">
+  <div id="assistant-avatar">🤖</div>
+  <div id="assistant-text">Hi, I'm your assistant!</div>
+</div>
+
+<script src="main.js"></script>
+
+</body>
+</html>
