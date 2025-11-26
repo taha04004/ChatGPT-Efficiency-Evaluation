@@ -5,9 +5,7 @@ measuring **accuracy**, **response time**, and **reasoning consistency**. The sy
 combines a Node.js backend, MongoDB database, WebSocket communication, and a modern
 front-end dashboard with Chart.js visualizations.
 
----
-
-## 🔍 Project Overview
+##  Project Overview
 
 The application sends questions from three academic domains to ChatGPT:
 
@@ -29,9 +27,7 @@ The front-end then displays aggregated metrics, such as:
 - Average response time  
 - Text summary of performance differences  
 
----
-
-## 🧠 Tech Stack
+## Tech Stack
 
 **Frontend**
 - HTML, CSS, JavaScript
@@ -48,9 +44,8 @@ The front-end then displays aggregated metrics, such as:
 **AI**
 - OpenAI / ChatGPT API
 
----
 
-## 📂 Dataset Overview
+## Dataset Overview
 
 The evaluation uses a structured dataset of **150 questions** split evenly across three domains:
 
@@ -74,9 +69,9 @@ Each question has:
 - An **expected answer or keyword set**
 - A **domain label**
 
----
 
-## ⚙️ How to Run the Project
+
+##  How to Run the Project
 
 ### 1. Clone the repository
 
