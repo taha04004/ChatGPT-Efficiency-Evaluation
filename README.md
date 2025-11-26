@@ -31,7 +31,7 @@ The front-end then displays aggregated metrics, such as:
 
 **Frontend**
 - HTML, CSS, JavaScript
-- Chart.js for charts and visualizations
+- main.js for charts and visualizations
 
 **Backend**
 - Node.js
@@ -69,12 +69,3 @@ Each question has:
 - An **expected answer or keyword set**
 - A **domain label**
 
-
-
-##  How to Run the Project
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
-cd YOUR-REPO-NAME
