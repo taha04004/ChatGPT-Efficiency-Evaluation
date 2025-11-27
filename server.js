@@ -5,7 +5,7 @@
 // Load env safely
 require("dotenv").config({ path: "./.env" });
 
-console.log("▶ server.js starting…");
+console.log(" server.js starting…");
 
 // =====================================================
 // DEPENDENCIES
@@ -44,7 +44,7 @@ const server = http.createServer(app);
 // TEST ROUTE
 // =====================================================
 app.get("/api/add", (req, res) => {
-  console.log("✔ /api/add hit");
+  console.log(" /api/add hit");
   const a = Number(req.query.a || 0);
   const b = Number(req.query.b || 0);
   return res.json({ a, b, sum: a + b });
@@ -66,7 +66,7 @@ function broadcast(msg) {
 }
 
 wss.on("connection", (socket) => {
-  console.log("🔌 WebSocket client connected");
+  console.log(" WebSocket client connected");
   socket.send("Connected to backend WebSocket server.");
 });
 
@@ -78,10 +78,10 @@ const mongoClient = new MongoClient(MONGODB_URI);
 
 async function getDB() {
   if (!db) {
-    console.log("⏳ Connecting to MongoDB…");
+    console.log(" Connecting to MongoDB…");
     await mongoClient.connect();
     db = mongoClient.db(DB_NAME);
-    console.log("📦 Connected to MongoDB:", DB_NAME);
+    console.log(" Connected to MongoDB:", DB_NAME);
   }
   return db;
 }
@@ -113,7 +113,7 @@ async function askOpenAI(question) {
     return await send();
   } catch (err) {
     if (err?.status === 429) {
-      console.log("⚠️ 429 — retrying in 2s…");
+      console.log(" 429 — retrying in 2s…");
       await sleep(2000);
       try {
         return await send();
@@ -154,10 +154,10 @@ function evaluateCorrectness(gptAnswer, expected) {
 app.post("/api/run-evaluation", async (req, res) => {
   try {
     const db = await getDB();
-    broadcast("🚀 Starting evaluation…");
+    broadcast(" Starting evaluation…");
 
     for (const domain of COLLECTIONS) {
-      broadcast(`📁 Evaluating ${domain}…`);
+      broadcast(` Evaluating ${domain}…`);
 
       const collection = db.collection(domain);
       const docs = await collection.find().toArray();
@@ -195,13 +195,13 @@ app.post("/api/run-evaluation", async (req, res) => {
       for (let i = 0; i < CONCURRENCY; i++) workers.push(worker());
       await Promise.all(workers);
 
-      broadcast(`✅ Finished ${domain}`);
+      broadcast(` Finished ${domain}`);
     }
 
-    broadcast("🎉 Evaluation complete!");
+    broadcast(" Evaluation complete!");
     res.json({ ok: true });
   } catch (err) {
-    broadcast("❌ Evaluation failed.");
+    broadcast(" Evaluation failed.");
     res.status(500).json({ error: "Evaluation failed" });
   }
 });
@@ -254,5 +254,5 @@ app.get("/", (req, res) => {
 // =====================================================
 const PORT = 3000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server + WebSocket running at http://localhost:${PORT}`);
+  console.log(` Server + WebSocket running at http://localhost:${PORT}`);
 });
