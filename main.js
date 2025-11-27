@@ -248,7 +248,7 @@ async function loadCharts() {
        — ${timeValues[bestTimeIndex]} ms</p>
   `;
 
-  setStatus("Results loaded ✔", "ok");
+  setStatus("Results loaded! ", "ok");
 }
 
 
