@@ -22,7 +22,7 @@ const OpenAI = require("openai");
 // =====================================================
 const MONGODB_URI =
   process.env.MONGO_URI ||
-  "mongodb+srv://taha4:ichigo2004@cluster0.4go0kno.mongodb.net/ChatGPT_Evaluation?retryWrites=true&w=majority";
+  "mongodb+srv://InsertMONGODB Cluster Link/ChatGPT_Evaluation?retryWrites=true&w=majority";
 
 const DB_NAME = "ChatGPT_Evaluation";
 const COLLECTIONS = ["History", "Social_Science", "Computer_Security"];
